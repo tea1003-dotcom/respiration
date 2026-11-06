@@ -1,0 +1,935 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>國中會考生物複習特訓：呼吸作用與氣體恆定</title>
+  <!-- Google Fonts: Noto Sans TC -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Noto Sans TC"', 'sans-serif'],
+          },
+          colors: {
+            bio: {
+              50: '#f0fdf4',
+              100: '#dcfce7',
+              200: '#bbf7d0',
+              600: '#16a34a',
+              700: '#15803d',
+              800: '#166534',
+              900: '#14532d',
+            },
+            ocean: {
+              500: '#0ea5e9',
+              600: '#0284c7',
+              700: '#0369a1',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    .transition-all-300 {
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col">
+
+  <!-- Header -->
+  <header class="bg-gradient-to-r from-bio-800 via-bio-700 to-ocean-700 text-white py-6 px-4 shadow-lg sticky top-0 z-50">
+    <div class="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+      <div>
+        <div class="inline-flex items-center gap-2 bg-bio-900/60 px-3 py-1 rounded-full text-xs font-bold text-bio-200 uppercase tracking-wider mb-2">
+          <span>🌿 國中會考九年級衝刺</span>
+          <span>•</span>
+          <span>生物複習 Gem</span>
+        </div>
+        <h1 class="text-2xl md:text-3xl font-black tracking-tight flex items-center gap-2">
+          🫁 生物的呼吸作用與氣體恆定
+        </h1>
+        <p class="text-xs md:text-sm text-bio-100 mt-1">徹底破解「呼吸作用 vs 呼吸運動」迷思，穩拿會考 A++！</p>
+      </div>
+
+      <!-- Navigation Tabs -->
+      <nav class="flex bg-bio-900/40 p-1.5 rounded-2xl border border-white/10 backdrop-blur-md">
+        <button onclick="switchTab('lab')" id="tabBtn-lab" class="tab-button px-4 py-2 rounded-xl text-sm font-bold flex items-center gap-1.5 transition-all bg-white text-bio-800 shadow-md">
+          🧪 互動實驗室
+        </button>
+        <button onclick="switchTab('quiz')" id="tabBtn-quiz" class="tab-button px-4 py-2 rounded-xl text-sm font-bold flex items-center gap-1.5 transition-all text-white/90 hover:text-white">
+          ✏️ 迷思挑戰賽
+        </button>
+        <button onclick="switchTab('notes')" id="tabBtn-notes" class="tab-button px-4 py-2 rounded-xl text-sm font-bold flex items-center gap-1.5 transition-all text-white/90 hover:text-white">
+          📚 必考對照表
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Content Container -->
+  <main class="max-w-5xl mx-auto p-4 md:p-6 w-full flex-grow">
+
+    <!-- TAB 1: 互動學習實驗室 -->
+    <section id="tab-lab" class="space-y-8">
+      <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
+        <h2 class="text-xl font-black text-slate-800 flex items-center gap-2 mb-2">
+          <span class="w-8 h-8 rounded-lg bg-bio-100 text-bio-700 inline-flex items-center justify-center text-base">🧪</span>
+          單元核心實驗動態模擬
+        </h2>
+        <p class="text-sm text-slate-600">透過手動操作滑桿或切換按鈕，觀察胸腔氣壓差、寶特瓶模型及植物呼吸作用的真相！</p>
+      </div>
+
+      <!-- 實驗 1：寶特瓶呼吸運動模型與真實胸腔機制 -->
+      <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-slate-100">
+          <div>
+            <span class="text-xs font-bold text-ocean-600 bg-ocean-50 px-2.5 py-1 rounded-md">會考超級必考</span>
+            <h3 class="text-lg font-bold text-slate-800 mt-1">實驗一：人體呼吸運動與寶特瓶模型</h3>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="text-xs font-bold text-slate-500">動作狀態：</span>
+            <span id="motionStatusBadge" class="text-xs font-black px-3 py-1 rounded-full bg-blue-100 text-blue-700">正在吸氣 (Inhaling)</span>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 mt-6 items-center">
+          <!-- SVG 視覺互動區 -->
+          <div class="lg:col-span-7 flex flex-col items-center justify-center bg-slate-50 p-4 rounded-2xl border border-slate-100">
+            <svg id="breathingSvg" viewBox="0 0 420 340" class="w-full max-w-[400px] h-auto select-none">
+              <defs>
+                <linearGradient id="lungGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#f87171"/>
+                  <stop offset="100%" stop-color="#ef4444"/>
+                </linearGradient>
+                <marker id="arrowUp" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto">
+                  <path d="M0,6 L3,0 L6,6 Z" fill="#2563eb" />
+                </marker>
+                <marker id="arrowDown" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto">
+                  <path d="M0,0 L6,0 L3,6 Z" fill="#ea580c" />
+                </marker>
+              </defs>
+
+              <!-- 寶特瓶身（代表胸腔） -->
+              <path d="M 160 35 L 260 35 L 260 65 L 320 115 L 320 280 L 100 280 L 100 115 L 160 65 Z" 
+                    fill="none" stroke="#64748b" stroke-width="4" stroke-linejoin="round"/>
+              <text x="110" y="110" fill="#94a3b8" font-size="11" font-weight="bold">寶特瓶壁 (代表胸壁/胸腔)</text>
+
+              <!-- 氣管 (Y型玻璃管) -->
+              <path d="M 210 20 L 210 115 M 210 115 L 175 145 M 210 115 L 245 145" 
+                    fill="none" stroke="#334155" stroke-width="7" stroke-linecap="round"/>
+              <text x="220" y="30" fill="#475569" font-size="11" font-weight="bold">氣管 (Y型管)</text>
+
+              <!-- 氣體流動指示動態箭頭 -->
+              <g id="airFlowIndicator">
+                <line id="airArrow" x1="210" y1="5" x2="210" y2="35" stroke="#2563eb" stroke-width="4" marker-end="url(#arrowUp)" />
+              </g>
+
+              <!-- 左肺 / 左氣球 -->
+              <g id="leftLungGroup" class="transition-all-300" style="transform-origin: 175px 145px; transform: scale(1.15);">
+                <ellipse cx="170" cy="185" rx="35" ry="45" fill="url(#lungGrad)" opacity="0.88" stroke="#dc2626" stroke-width="2"/>
+                <text x="145" y="190" fill="#fff" font-size="11" font-weight="bold">氣球(肺)</text>
+              </g>
+
+              <!-- 右肺 / 右氣球 -->
+              <g id="rightLungGroup" class="transition-all-300" style="transform-origin: 245px 145px; transform: scale(1.15);">
+                <ellipse cx="250" cy="185" rx="35" ry="45" fill="url(#lungGrad)" opacity="0.88" stroke="#dc2626" stroke-width="2"/>
+                <text x="235" y="190" fill="#fff" font-size="11" font-weight="bold">氣球(肺)</text>
+              </g>
+
+              <!-- 底部氣球膜 (代表橫膈) -->
+              <!-- 呼氣是往上拱 (彎曲往上)，吸氣是往下拉 (彎曲往下) -->
+              <path id="diaphragmCurve" d="M 100 280 Q 210 325 320 280" 
+                    fill="none" stroke="#2563eb" stroke-width="7" stroke-linecap="round" class="transition-all-300"/>
+              
+              <!-- 橫膈拉動手柄 -->
+              <circle id="diaphragmHandle" cx="210" cy="303" r="8" fill="#1d4ed8" class="transition-all-300 shadow"/>
+              <text id="diaphragmLabel" x="145" y="335" fill="#1d4ed8" font-size="12" font-weight="900">橡皮膜(橫膈) 下降/往下拉</text>
+
+              <!-- 胸腔內部氣壓指標 -->
+              <g id="pressureBadge">
+                <rect x="155" y="240" width="110" height="24" rx="12" fill="#0f172a" opacity="0.75" />
+                <text id="pressureText" x="210" y="256" fill="#f8fafc" font-size="11" text-anchor="middle" font-weight="bold">胸腔氣壓 &lt; 外界</text>
+              </g>
+            </svg>
+
+            <!-- 拖曳滑桿控制 -->
+            <div class="w-full mt-4 px-4">
+              <div class="flex justify-between text-xs font-bold text-slate-500 mb-1">
+                <span class="text-orange-600">👈 向上推 (呼氣)</span>
+                <span class="text-slate-400">滑桿：控制橫膈位置</span>
+                <span class="text-blue-600">向下拉 (吸氣) 👉</span>
+              </div>
+              <input type="range" id="diaphragmSlider" min="0" max="100" value="85" class="w-full accent-bio-600 cursor-pointer h-2 bg-slate-200 rounded-lg">
+            </div>
+          </div>
+
+          <!-- 即時連動解說與物理狀態卡片 -->
+          <div class="lg:col-span-5 space-y-3">
+            <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200">
+              <span class="text-xs font-bold text-slate-400">橫膈肌狀態</span>
+              <p id="statDiaphragm" class="text-base font-black text-blue-700">收縮，位置下降（往下移）</p>
+            </div>
+            <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200">
+              <span class="text-xs font-bold text-slate-400">肋骨與胸腔體積</span>
+              <p id="statRibs" class="text-base font-black text-blue-700">肋骨上舉，胸腔體積變大</p>
+            </div>
+            <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200">
+              <span class="text-xs font-bold text-slate-400">胸腔內部壓力比較</span>
+              <p id="statPressure" class="text-base font-black text-blue-700">胸腔壓力變小（內部氣壓 &lt; 外界大氣壓）</p>
+            </div>
+            <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200">
+              <span class="text-xs font-bold text-slate-400">空氣流動方向</span>
+              <p id="statAirflow" class="text-base font-black text-blue-700">空氣被強行由外界灌入肺部（吸氣）</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- 💡 重點聚焦 -->
+        <div class="mt-6 p-4 rounded-xl bg-amber-50 border-l-4 border-amber-500 text-amber-950 text-sm leading-relaxed">
+          <p class="font-bold flex items-center gap-1.5 text-amber-900 mb-1">
+            <span>💡</span> 重點聚焦：會考陷阱千萬別上當！
+          </p>
+          <ul class="list-disc list-inside space-y-1 text-xs md:text-sm">
+            <li><strong>肺臟「沒有肌肉」：</strong>肺不會自己主動膨脹或縮小，完全是靠胸腔壓力差被迫改變體積！</li>
+            <li><strong>模型限制考點：</strong>寶特瓶是<strong>硬質瓶身</strong>，故<strong>無法模擬「肋骨的上舉與下降」</strong>，只能模擬橫膈與胸腔壓力。</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- 實驗 2：呼吸作用 vs 光合作用 24小時氣體出入模擬 -->
+      <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-slate-100">
+          <div>
+            <span class="text-xs font-bold text-bio-700 bg-bio-100 px-2.5 py-1 rounded-md">九年級魔王盲點</span>
+            <h3 class="text-lg font-bold text-slate-800 mt-1">實驗二：綠色植物的氣體交換（光照 vs 黑暗）</h3>
+          </div>
+          <div class="flex gap-2">
+            <button onclick="setPlantLight('day')" id="btnDay" class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-amber-400 text-amber-950 shadow-sm transition">
+              ☀️ 白天強光
+            </button>
+            <button onclick="setPlantLight('dim')" id="btnDim" class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-slate-100 text-slate-600 transition hover:bg-slate-200">
+              ⛅ 晨昏微光 (平衡點)
+            </button>
+            <button onclick="setPlantLight('night')" id="btnNight" class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-slate-100 text-slate-600 transition hover:bg-slate-200">
+              🌙 深夜無光
+            </button>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6 items-center">
+          <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100 flex flex-col items-center justify-center">
+            <svg id="plantSvg" viewBox="0 0 360 260" class="w-full max-w-[340px] h-auto">
+              <!-- 環境背景光源 -->
+              <rect id="envBg" x="0" y="0" width="360" height="260" rx="16" fill="#fef3c7" class="transition-all-300"/>
+              
+              <!-- 葉片本體 (葉肉細胞) -->
+              <path d="M 60 130 C 60 50, 180 30, 290 130 C 180 230, 60 210, 60 130 Z" fill="#22c55e" stroke="#15803d" stroke-width="4"/>
+              <!-- 葉脈 -->
+              <path d="M 60 130 Q 180 130 280 130 M 120 130 L 160 90 M 180 130 L 220 90 M 130 130 L 170 170 M 190 130 L 230 170" fill="none" stroke="#166534" stroke-width="3" stroke-linecap="round"/>
+
+              <!-- 氣孔 -->
+              <ellipse cx="175" cy="130" rx="14" ry="7" fill="#14532d" />
+              <text x="145" y="150" fill="#fff" font-size="10" font-weight="bold">氣孔開口</text>
+
+              <!-- 氣體通道與箭頭指示 -->
+              <g id="gasFlowDay">
+                <!-- CO2 進來 -->
+                <path d="M 175 40 L 175 110" fill="none" stroke="#3b82f6" stroke-width="4" stroke-dasharray="6,4" marker-end="url(#arrowDown)"/>
+                <text x="80" y="60" fill="#1d4ed8" font-size="11" font-weight="900">吸收大量 CO₂ (光合作用 &gt;&gt; 呼吸)</text>
+                <!-- O2 出去 -->
+                <path d="M 175 150 L 175 220" fill="none" stroke="#10b981" stroke-width="4" stroke-dasharray="6,4" marker-end="url(#arrowDown)"/>
+                <text x="100" y="240" fill="#047857" font-size="11" font-weight="900">釋放大量 O₂ 到空氣中</text>
+              </g>
+
+              <!-- 植物細胞呼吸作用標籤 -->
+              <rect x="230" y="10" width="120" height="42" rx="8" fill="#ffffff" stroke="#cbd5e1" />
+              <text x="240" y="27" fill="#334155" font-size="10" font-weight="bold">粒線體 (全天進行)</text>
+              <text x="240" y="42" fill="#ef4444" font-size="10" font-weight="900">🔥 隨時都在行呼吸</text>
+            </svg>
+          </div>
+
+          <div class="space-y-4">
+            <div id="plantExplainBox" class="p-4 rounded-xl bg-green-50 border border-green-200 text-slate-800">
+              <h4 id="plantStatusTitle" class="text-base font-black text-green-900 mb-1">☀️ 白天強光狀態：</h4>
+              <p id="plantStatusDesc" class="text-sm leading-relaxed text-green-800">
+                植物<strong>同時進行「光合作用」與「呼吸作用」</strong>！<br>
+                由於光合速率遠大於呼吸速率，植物吸收二氧化碳並釋放氧氣。千萬不要以為植物白天不呼吸！
+              </p>
+            </div>
+            
+            <div class="grid grid-cols-2 gap-3 text-center">
+              <div class="p-3 bg-slate-50 rounded-xl border border-slate-200">
+                <span class="text-xs text-slate-500 font-bold block">光合作用 (葉綠體)</span>
+                <span id="labelPhotoRate" class="text-sm font-black text-bio-700">速率極旺盛 ⚡⚡⚡</span>
+              </div>
+              <div class="p-3 bg-slate-50 rounded-xl border border-slate-200">
+                <span class="text-xs text-slate-500 font-bold block">呼吸作用 (粒線體)</span>
+                <span id="labelRespRate" class="text-sm font-black text-orange-600">持續恆定進行 ⏱️</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 💡 重點聚焦 -->
+        <div class="mt-6 p-4 rounded-xl bg-bio-50 border-l-4 border-bio-600 text-bio-950 text-sm leading-relaxed">
+          <p class="font-bold flex items-center gap-1.5 text-bio-900 mb-1">
+            <span>💡</span> 重點聚焦：打破「植物白天吐氧、晚上才呼吸」的大迷思！
+          </p>
+          <p class="text-xs md:text-sm">
+            <strong>活著的所有生物細胞（包括所有植物細胞）不論白天黑夜，24 小時隨時隨地都在粒線體中進行呼吸作用</strong>以產生能量維持生命！如果植物白天停止呼吸作用，細胞就會死掉！
+          </p>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- TAB 2: 迷思觀念大挑戰 -->
+    <section id="tab-quiz" class="hidden max-w-3xl mx-auto space-y-6">
+      <!-- 測驗進度條 -->
+      <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200">
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-xs font-bold text-bio-700 uppercase tracking-wider">會考經典陷阱題庫</span>
+          <span id="quizProgressText" class="text-xs font-black text-slate-600">第 1 / 10 題</span>
+        </div>
+        <div class="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden">
+          <div id="quizProgressBar" class="bg-gradient-to-r from-bio-600 to-ocean-500 h-full w-[10%] transition-all duration-300"></div>
+        </div>
+      </div>
+
+      <!-- 題目與作答卡片 -->
+      <div id="quizCard" class="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-slate-200 relative transition-all">
+        <!-- 題目標頭與分類標籤 -->
+        <div class="flex items-center gap-2 mb-3">
+          <span id="qTag" class="px-2.5 py-0.5 rounded-md text-xs font-bold bg-amber-100 text-amber-800">
+            陷阱偵測
+          </span>
+          <span class="text-xs text-slate-400 font-medium">單選題</span>
+        </div>
+        
+        <h3 id="qTitle" class="text-lg md:text-xl font-black text-slate-800 leading-snug mb-6">
+          題目載入中...
+        </h3>
+
+        <!-- 四個選項按鈕 -->
+        <div id="optionsContainer" class="space-y-3">
+          <!-- JS 動態產生選項按鈕 -->
+        </div>
+
+        <!-- 💡 觀念大白話解析 (作答後展開) -->
+        <div id="explainBox" class="mt-6 p-5 rounded-2xl bg-slate-50 border border-slate-200 hidden transition-all">
+          <div class="flex items-center gap-2 mb-2">
+            <span id="explainResultBadge" class="px-2.5 py-0.5 rounded-md text-xs font-black"></span>
+            <span class="text-xs font-bold text-slate-700">💡 觀念大白話解析</span>
+          </div>
+          <p id="explainContent" class="text-sm text-slate-700 leading-relaxed"></p>
+        </div>
+
+        <!-- 下一題按鈕 -->
+        <div class="mt-6 flex justify-end">
+          <button id="btnNextQ" onclick="nextQuestion()" class="hidden px-6 py-2.5 rounded-xl font-bold text-sm bg-bio-700 hover:bg-bio-800 text-white shadow-md shadow-bio-700/20 items-center gap-2 transition">
+            下一題 ➔
+          </button>
+        </div>
+      </div>
+
+      <!-- 結算報告卡片 (預設隱藏) -->
+      <div id="resultCard" class="bg-white rounded-3xl p-8 shadow-sm border border-slate-200 text-center hidden">
+        <div class="w-20 h-20 mx-auto rounded-full bg-bio-50 flex items-center justify-center text-4xl mb-4 shadow-inner">
+          🏆
+        </div>
+        <h3 class="text-2xl font-black text-slate-800 mb-1">觀念診斷報告出爐！</h3>
+        <p class="text-sm text-slate-500 mb-6">會考生物單元：「呼吸作用與氣體恆定」測驗成果</p>
+
+        <div class="inline-block p-6 bg-slate-50 rounded-3xl border border-slate-100 mb-6">
+          <span class="text-xs font-bold text-slate-400 block mb-1">你的最終成績</span>
+          <span id="scoreDisplay" class="text-5xl font-black text-bio-700">0</span>
+          <span class="text-xl font-bold text-slate-400">/ 100 分</span>
+        </div>
+
+        <div id="feedbackBox" class="max-w-lg mx-auto p-5 rounded-2xl bg-bio-50 border border-bio-200 text-left mb-6">
+          <h4 id="feedbackTitle" class="font-black text-bio-900 text-base mb-1">評語載入中...</h4>
+          <p id="feedbackText" class="text-sm text-bio-800 leading-relaxed"></p>
+        </div>
+
+        <button onclick="restartQuiz()" class="px-8 py-3 rounded-2xl font-black text-white bg-slate-800 hover:bg-slate-900 transition shadow-lg">
+          🔄 重新挑戰一次
+        </button>
+      </div>
+    </section>
+
+
+    <!-- TAB 3: 重點筆記對照表 -->
+    <section id="tab-notes" class="hidden space-y-6">
+      <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
+        <h2 class="text-xl font-black text-slate-800 flex items-center gap-2 mb-1">
+          <span class="w-8 h-8 rounded-lg bg-ocean-50 text-ocean-600 inline-flex items-center justify-center text-base">📚</span>
+          九年級會考必備：常見誤解 vs 會考標準答案
+        </h2>
+        <p class="text-sm text-slate-600">將生化反應轉為大白話！臨考前瞄一眼，秒殺會考常考題陷阱。</p>
+      </div>
+
+      <!-- 對照卡片 1 -->
+      <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 border-l-4 border-l-amber-500">
+        <div class="flex items-center gap-2 mb-3">
+          <span class="px-2.5 py-0.5 rounded text-xs font-bold bg-amber-100 text-amber-800">超級高頻率考點</span>
+          <h3 class="text-base font-black text-slate-800">迷思一：「呼吸作用」等於「呼吸運動」嗎？</h3>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm mt-3">
+          <div class="bg-red-50/70 p-4 rounded-xl border border-red-200">
+            <span class="text-xs font-bold text-red-600 flex items-center gap-1 mb-1">❌ 學生常見盲點</span>
+            <p class="text-slate-700 leading-relaxed">
+              以為吸氣、呼氣把胸部挺起來就叫做「呼吸作用」。
+            </p>
+          </div>
+          <div class="bg-green-50/70 p-4 rounded-xl border border-green-200">
+            <span class="text-xs font-bold text-green-700 flex items-center gap-1 mb-1">✅ 會考標準正確觀念</span>
+            <p class="text-slate-800 font-medium leading-relaxed">
+              <strong>呼吸作用（細胞層次）：</strong>是在細胞內的<strong>粒線體</strong>把葡萄糖分解出<strong>能量（ATP）</strong>的化學反應！<br>
+              <strong>呼吸運動（器官層次）：</strong>只是藉由肋骨與橫膈運動，把空氣吸進來、呼出去的物理換氣動作。
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 對照卡片 2 -->
+      <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 border-l-4 border-l-bio-600">
+        <div class="flex items-center gap-2 mb-3">
+          <span class="px-2.5 py-0.5 rounded text-xs font-bold bg-bio-100 text-bio-800">神經恆定大盲點</span>
+          <h3 class="text-base font-black text-slate-800">迷思二：跑步劇烈喘氣，是因為「缺氧」刺激大腦？</h3>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm mt-3">
+          <div class="bg-red-50/70 p-4 rounded-xl border border-red-200">
+            <span class="text-xs font-bold text-red-600 flex items-center gap-1 mb-1">❌ 學生常見盲點</span>
+            <p class="text-slate-700 leading-relaxed">
+              以為大腦偵測到血液中「氧氣太少」，所以命令肺臟趕快吸氧。
+            </p>
+          </div>
+          <div class="bg-green-50/70 p-4 rounded-xl border border-green-200">
+            <span class="text-xs font-bold text-green-700 flex items-center gap-1 mb-1">✅ 會考標準正確觀念</span>
+            <p class="text-slate-800 font-medium leading-relaxed">
+              <strong>控制中樞是「腦幹」（不是大腦！）：</strong><br>
+              腦幹專門偵測血液中<strong>「二氧化碳濃度」</strong>！當運動使血液中二氧化碳過多（血液呈酸性），腦幹受刺激發出指令讓呼吸加快加深，以排除過多的 CO₂。
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 對照卡片 3 -->
+      <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 border-l-4 border-l-blue-600">
+        <div class="flex items-center gap-2 mb-3">
+          <span class="px-2.5 py-0.5 rounded text-xs font-bold bg-blue-100 text-blue-800">跨界生物比較</span>
+          <h3 class="text-base font-black text-slate-800">迷思三：所有的動物都是用「肺」呼吸？昆蟲用嘴巴呼吸？</h3>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm mt-3">
+          <div class="bg-red-50/70 p-4 rounded-xl border border-red-200">
+            <span class="text-xs font-bold text-red-600 flex items-center gap-1 mb-1">❌ 學生常見盲點</span>
+            <p class="text-slate-700 leading-relaxed">
+              以為螞蟻、蝗蟲是用嘴巴或鼻子吸氣，蚯蚓有小型肺臟。
+            </p>
+          </div>
+          <div class="bg-green-50/70 p-4 rounded-xl border border-green-200">
+            <span class="text-xs font-bold text-green-700 flex items-center gap-1 mb-1">✅ 會考標準正確觀念</span>
+            <ul class="text-slate-800 font-medium space-y-1">
+              <li>• <strong>昆蟲：</strong>靠腹部兩側的<strong>氣門與氣管系統</strong>直接將氣體送到細胞，血液不運送氧氣！</li>
+              <li>• <strong>蚯蚓：</strong>靠<strong>潮濕的皮膚表面</strong>進行氣體擴散。</li>
+              <li>• <strong>魚類/蝦蟹/蝌蚪：</strong>用<strong>鰓</strong>呼吸。</li>
+              <li>• <strong>呼吸器官三大共通特徵：</strong><strong>表面潮濕</strong>、<strong>表面積大（皺褶/分支）</strong>、<strong>布滿微血管</strong>（昆蟲除外）。</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- 總結表格 -->
+      <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
+        <h3 class="text-base font-black text-slate-800 mb-4 flex items-center gap-2">
+          <span>🎯</span> 會考一秒秒殺：光合作用 vs 呼吸作用 精簡對照表
+        </h3>
+        <div class="overflow-x-auto">
+          <table class="w-full text-xs md:text-sm text-left border-collapse">
+            <thead>
+              <tr class="bg-slate-100 text-slate-700 border-b border-slate-200">
+                <th class="p-3 font-bold">比較項目</th>
+                <th class="p-3 font-bold text-bio-700">光合作用 (葉綠體)</th>
+                <th class="p-3 font-bold text-orange-700">呼吸作用 (粒線體)</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100">
+              <tr>
+                <td class="p-3 font-bold text-slate-600">主要目的</td>
+                <td class="p-3">合成養分（葡萄糖），將光能轉為化學能</td>
+                <td class="p-3 font-black text-red-600">分解養分，釋放能量供細胞使用</td>
+              </tr>
+              <tr>
+                <td class="p-3 font-bold text-slate-600">進行時機</td>
+                <td class="p-3"><strong>只有有光照時</strong></td>
+                <td class="p-3 font-black text-bio-800">隨時隨地 (24小時不間斷)</td>
+              </tr>
+              <tr>
+                <td class="p-3 font-bold text-slate-600">適用生物</td>
+                <td class="p-3">植物、藻類、藍綠菌（有光合色素者）</td>
+                <td class="p-3 font-bold">所有活著的生物細胞（動植物皆然）</td>
+              </tr>
+              <tr>
+                <td class="p-3 font-bold text-slate-600">氣體原料與產物</td>
+                <td class="p-3">消耗 CO₂，產生 O₂</td>
+                <td class="p-3">消耗 O₂，產生 CO₂ 與 H₂O</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="mt-auto py-6 bg-slate-900 text-slate-400 text-center text-xs border-t border-slate-800">
+    <div class="max-w-5xl mx-auto px-4">
+      <p class="font-bold text-slate-300">國中九年級生物會考複習專用數位教材 • 呼吸與恆定主題</p>
+      <p class="mt-1 text-slate-500">精心編製 100% 符應台灣國中教育會考考綱與常見誘答盲點設計</p>
+    </div>
+  </footer>
+
+  <!-- JavaScript 邏輯控制 -->
+  <script>
+    /* ========================================================
+       1. 頁籤導覽 (Tabs) 切換邏輯
+       ======================================================== */
+    function switchTab(tabId) {
+      const tabs = ['lab', 'quiz', 'notes'];
+      tabs.forEach(id => {
+        const tabEl = document.getElementById(`tab-${id}`);
+        const btnEl = document.getElementById(`tabBtn-${id}`);
+        if (id === tabId) {
+          tabEl.classList.remove('hidden');
+          btnEl.className = "tab-button px-4 py-2 rounded-xl text-sm font-bold flex items-center gap-1.5 transition-all bg-white text-bio-800 shadow-md";
+        } else {
+          tabEl.classList.add('hidden');
+          btnEl.className = "tab-button px-4 py-2 rounded-xl text-sm font-bold flex items-center gap-1.5 transition-all text-white/90 hover:text-white";
+        }
+      });
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    /* ========================================================
+       2. 互動實驗室 1：呼吸運動動態 SVG 控制
+       ======================================================== */
+    const slider = document.getElementById('diaphragmSlider');
+    const diaphragmCurve = document.getElementById('diaphragmCurve');
+    const diaphragmHandle = document.getElementById('diaphragmHandle');
+    const diaphragmLabel = document.getElementById('diaphragmLabel');
+    const airArrow = document.getElementById('airArrow');
+    const leftLung = document.getElementById('leftLungGroup');
+    const rightLung = document.getElementById('rightLungGroup');
+    const pressureText = document.getElementById('pressureText');
+    const motionBadge = document.getElementById('motionStatusBadge');
+
+    const statDiaphragm = document.getElementById('statDiaphragm');
+    const statRibs = document.getElementById('statRibs');
+    const statPressure = document.getElementById('statPressure');
+    const statAirflow = document.getElementById('statAirflow');
+
+    slider.addEventListener('input', function() {
+      const val = parseInt(this.value); // 0 (呼氣極限) ~ 100 (吸氣極限)
+      
+      // 計算橫膈弧線 (y從 240~330)
+      // 0 時 y = 240 (向上凸，呼氣)；100 時 y = 330 (向下凹，吸氣)
+      const ctrlY = 240 + (val / 100) * 90;
+      diaphragmCurve.setAttribute('d', `M 100 280 Q 210 ${ctrlY} 320 280`);
+      diaphragmHandle.setAttribute('cy', (ctrlY + 280) / 2);
+
+      // 氣球縮放比例 0.7 ~ 1.3
+      const scale = 0.7 + (val / 100) * 0.6;
+      leftLung.style.transform = `scale(${scale})`;
+      rightLung.style.transform = `scale(${scale})`;
+
+      if (val > 50) {
+        // 吸氣狀態
+        motionBadge.textContent = "正在吸氣 (Inhaling)";
+        motionBadge.className = "text-xs font-black px-3 py-1 rounded-full bg-blue-100 text-blue-700";
+        
+        diaphragmLabel.textContent = "橡皮膜(橫膈) 下降/向下拉";
+        diaphragmLabel.setAttribute('fill', '#1d4ed8');
+        diaphragmCurve.setAttribute('stroke', '#2563eb');
+        
+        pressureText.textContent = "胸腔氣壓 < 外界";
+        airArrow.setAttribute('y1', '5');
+        airArrow.setAttribute('y2', '35');
+        airArrow.setAttribute('stroke', '#2563eb');
+        airArrow.setAttribute('marker-end', 'url(#arrowDown)');
+
+        statDiaphragm.textContent = "收縮，位置下降（往下移）";
+        statDiaphragm.className = "text-base font-black text-blue-700";
+        statRibs.textContent = "肋骨上舉，胸腔體積變大";
+        statRibs.className = "text-base font-black text-blue-700";
+        statPressure.textContent = "胸腔壓力變小（內部氣壓 < 外界大氣壓）";
+        statPressure.className = "text-base font-black text-blue-700";
+        statAirflow.textContent = "外界空氣順著氣管壓入肺部膨脹";
+        statAirflow.className = "text-base font-black text-blue-700";
+      } else {
+        // 呼氣狀態
+        motionBadge.textContent = "正在呼氣 (Exhaling)";
+        motionBadge.className = "text-xs font-black px-3 py-1 rounded-full bg-orange-100 text-orange-700";
+
+        diaphragmLabel.textContent = "橡皮膜(橫膈) 舒張/向上推";
+        diaphragmLabel.setAttribute('fill', '#ea580c');
+        diaphragmCurve.setAttribute('stroke', '#ea580c');
+
+        pressureText.textContent = "胸腔氣壓 > 外界";
+        airArrow.setAttribute('y1', '35');
+        airArrow.setAttribute('y2', '5');
+        airArrow.setAttribute('stroke', '#ea580c');
+        airArrow.setAttribute('marker-end', 'url(#arrowUp)');
+
+        statDiaphragm.textContent = "舒張，位置上升（恢復拱形）";
+        statDiaphragm.className = "text-base font-black text-orange-700";
+        statRibs.textContent = "肋骨下降，胸腔體積變小";
+        statRibs.className = "text-base font-black text-orange-700";
+        statPressure.textContent = "胸腔壓力變大（內部氣壓 > 外界大氣壓）";
+        statPressure.className = "text-base font-black text-orange-700";
+        statAirflow.textContent = "肺部受壓迫收縮，氣體排出體外";
+        statAirflow.className = "text-base font-black text-orange-700";
+      }
+    });
+
+    /* ========================================================
+       3. 互動實驗室 2：植物氣體交換 SVG 切換
+       ======================================================== */
+    function setPlantLight(mode) {
+      const envBg = document.getElementById('envBg');
+      const gasFlow = document.getElementById('gasFlowDay');
+      const pBox = document.getElementById('plantExplainBox');
+      const pTitle = document.getElementById('plantStatusTitle');
+      const pDesc = document.getElementById('plantStatusDesc');
+      const lPhoto = document.getElementById('labelPhotoRate');
+      const lResp = document.getElementById('labelRespRate');
+
+      const bDay = document.getElementById('btnDay');
+      const bDim = document.getElementById('btnDim');
+      const bNight = document.getElementById('btnNight');
+
+      [bDay, bDim, bNight].forEach(btn => {
+        btn.className = "px-3.5 py-1.5 rounded-xl text-xs font-bold bg-slate-100 text-slate-600 transition hover:bg-slate-200";
+      });
+
+      if (mode === 'day') {
+        bDay.className = "px-3.5 py-1.5 rounded-xl text-xs font-bold bg-amber-400 text-amber-950 shadow-sm transition";
+        envBg.setAttribute('fill', '#fef3c7');
+        pBox.className = "p-4 rounded-xl bg-green-50 border border-green-200 text-slate-800";
+        pTitle.textContent = "☀️ 白天強光狀態：";
+        pTitle.className = "text-base font-black text-green-900 mb-1";
+        pDesc.innerHTML = "植物<strong>同時進行「光合作用」與「呼吸作用」</strong>！<br>光合速率 &gt;&gt; 呼吸速率，整體外在表現為：<strong>吸收 CO₂、釋放 O₂</strong>。";
+        lPhoto.textContent = "速率極旺盛 ⚡⚡⚡";
+        lResp.textContent = "持續恆定進行 ⏱️";
+
+        gasFlow.innerHTML = `
+          <path d="M 175 40 L 175 110" fill="none" stroke="#3b82f6" stroke-width="4" stroke-dasharray="6,4" marker-end="url(#arrowDown)"/>
+          <text x="80" y="60" fill="#1d4ed8" font-size="11" font-weight="900">淨吸收大量 CO₂ (光合速率大)</text>
+          <path d="M 175 150 L 175 220" fill="none" stroke="#10b981" stroke-width="4" stroke-dasharray="6,4" marker-end="url(#arrowDown)"/>
+          <text x="100" y="240" fill="#047857" font-size="11" font-weight="900">淨釋放大量 O₂ 到空氣中</text>
+        `;
+      } else if (mode === 'dim') {
+        bDim.className = "px-3.5 py-1.5 rounded-xl text-xs font-bold bg-amber-200 text-amber-900 shadow-sm transition";
+        envBg.setAttribute('fill', '#fed7aa');
+        pBox.className = "p-4 rounded-xl bg-amber-50 border border-amber-200 text-slate-800";
+        pTitle.textContent = "⛅ 晨昏微弱光線（光補償點）：";
+        pTitle.className = "text-base font-black text-amber-900 mb-1";
+        pDesc.innerHTML = "此時<strong>光合作用速率正好等於呼吸作用速率</strong>！<br>光合作用產生的 O₂ 剛好全給呼吸作用用；呼吸作用釋放的 CO₂ 剛好全給光合作用用。<strong>外觀看起來完全沒有氣體進出</strong>！";
+        lPhoto.textContent = "速率中等 (光合 = 呼吸)";
+        lResp.textContent = "持續恆定進行 ⏱️";
+
+        gasFlow.innerHTML = `
+          <circle cx="175" cy="130" r="30" fill="none" stroke="#ea580c" stroke-width="2" stroke-dasharray="4,4"/>
+          <text x="100" y="80" fill="#c2410c" font-size="11" font-weight="900">光合作用 = 呼吸作用 (體內自給自足)</text>
+          <text x="110" y="210" fill="#c2410c" font-size="11" font-weight="900">對外界無淨氣體交換</text>
+        `;
+      } else {
+        bNight.className = "px-3.5 py-1.5 rounded-xl text-xs font-bold bg-slate-800 text-white shadow-sm transition";
+        envBg.setAttribute('fill', '#1e293b');
+        pBox.className = "p-4 rounded-xl bg-slate-100 border border-slate-300 text-slate-800";
+        pTitle.textContent = "🌙 深夜完全無光狀態：";
+        pTitle.className = "text-base font-black text-slate-900 mb-1";
+        pDesc.innerHTML = "沒有光線，<strong>光合作用完全停止</strong>！<br>但細胞<strong>呼吸作用依舊日夜不停運作</strong>！植物此時跟人類一樣：<strong>吸入 O₂、排出 CO₂</strong>。";
+        lPhoto.textContent = "完全停止 🛑";
+        lResp.textContent = "持續恆定進行 ⏱️";
+
+        gasFlow.innerHTML = `
+          <path d="M 175 40 L 175 110" fill="none" stroke="#10b981" stroke-width="4" stroke-dasharray="6,4" marker-end="url(#arrowDown)"/>
+          <text x="100" y="60" fill="#22c55e" font-size="11" font-weight="900">吸入 O₂ (供細胞粒線體使用)</text>
+          <path d="M 175 150 L 175 220" fill="none" stroke="#ef4444" stroke-width="4" stroke-dasharray="6,4" marker-end="url(#arrowDown)"/>
+          <text x="100" y="240" fill="#f87171" font-size="11" font-weight="900">排出 CO₂ (呼吸代謝廢物)</text>
+        `;
+      }
+    }
+
+    /* ========================================================
+       4. 迷思挑戰賽 (10 題高頻誘答題庫與即時作答邏輯)
+       ======================================================== */
+    const quizData = [
+      {
+        tag: "名詞迷思",
+        title: "生物學上所稱的「呼吸作用」，其主要目的與進行場所為何？",
+        options: [
+          "肺臟藉由肌肉主動收縮，將氧氣吸入體內",
+          "在細胞的粒線體內分解葡萄糖等養分，以產生細胞活動所需的能量",
+          "在葉綠體中將二氧化碳還原轉化為葡萄糖",
+          "血液將氧氣攜帶至組織細胞交換二氧化碳的過程"
+        ],
+        ans: 1,
+        explain: "迷思破除！很多同學誤以為呼吸作用是「肺部的吸氣呼氣」。肺部的運動叫做「呼吸運動」；而「呼吸作用」是指在細胞粒線體中氧化分解葡萄糖、產生能量（ATP）的生化反應！"
+      },
+      {
+        tag: "調控中樞陷阱",
+        title: "當我們剛跑完大隊接力 800 公尺後，呼吸變得十分急促，此生理反應主要是受到體內何種刺激？由何處中樞控制？",
+        options: [
+          "血液中氧氣太少，大腦發出指令加快呼吸",
+          "血液中二氧化碳過多，腦幹發出指令加快呼吸",
+          "血液中二氧化碳過多，大腦發出指令加快呼吸",
+          "血液中水分太少，脊髓發出指令加快呼吸"
+        ],
+        ans: 1,
+        explain: "會考超高頻大考點！人體呼吸頻率的反射中樞是「腦幹」而非大腦；且腦幹偵測的是「二氧化碳濃度」（非氧氣濃度）。當血液中二氧化碳濃度上升，刺激腦幹使呼吸加速以利排出 CO₂。"
+      },
+      {
+        tag: "解剖與模型陷阱",
+        title: "國中理化與生物常利用「寶特瓶、氣球與橡皮膜」製作呼吸模型。下列敘述何者正確？",
+        options: [
+          "底部的橡皮膜向下拉時，寶特瓶內氣壓上升，代表呼氣",
+          "寶特瓶內的氣球膨脹，是因為氣球壁上的肌肉主動收縮擴張",
+          "此模型無法模擬真實人體中「肋骨的上舉與下降」動作",
+          "寶特瓶身代表肺臟，底部的橡皮膜代表肋骨"
+        ],
+        ans: 2,
+        explain: "核心陷阱！寶特瓶模型中，寶特瓶是堅硬的塑膠外殼，無法模擬「肋骨」的上舉下降！另外，人體的肺「完全沒有肌肉」，是胸腔體積擴大使內部氣壓低於外界氣壓，氣體被迫灌入肺部才被動膨脹。"
+      },
+      {
+        tag: "植物生理盲點",
+        title: "關於綠色植物「呼吸作用」與「光合作用」的時機，下列哪位同學的觀念完全正確？",
+        options: [
+          "小明：植物白天只行光合作用，晚上才進行呼吸作用",
+          "小華：植物 24 小時無時無刻都在粒線體中進行呼吸作用",
+          "小英：植物只有在沒有陽光時，細胞才會需要能量而開始呼吸",
+          "小強：植物呼吸作用消耗二氧化碳，光合作用消耗氧氣"
+        ],
+        ans: 1,
+        explain: "迷思破除！植物也是活的生物，植物的所有活細胞「24 小時隨時都在進行呼吸作用」以維持生命。白天只是光合作用速率大於呼吸作用速率，使得外觀淨表現為釋放氧氣。"
+      },
+      {
+        tag: "胸腔氣壓判斷",
+        title: "當人體吸氣時，胸腔各部位與氣壓的動態變化，下列何者正確？",
+        options: [
+          "肋骨下降、橫膈上升，胸腔體積變大",
+          "肋骨上舉、橫膈下降，胸腔體積變大，胸腔內壓力小於外界大氣壓",
+          "肋骨上舉、橫膈下降，胸腔體積變大，胸腔內壓力大於外界大氣壓",
+          "橫膈放鬆向上拱起，使得肺泡氣壓小於外界"
+        ],
+        ans: 1,
+        explain: "吸氣口訣：肋骨上舉、橫膈下降（收縮） ➔ 胸腔體積變大 ➔ 氣壓變小（小於外界） ➔ 外界空氣衝入體內！"
+      },
+      {
+        tag: "動物器官比較",
+        title: "比較蝗蟲、蚯蚓與狗的氣體交換構造，下列敘述何者正確？",
+        options: [
+          "蝗蟲利用頭部的口器進行呼吸運動",
+          "蚯蚓需保持表皮濕潤，利用擴散作用進行氣體交換",
+          "狗與蝗蟲皆具有肺臟，並藉由血液運送氧氣",
+          "昆蟲體內有微血管網包覆氣管，以利氣體交換"
+        ],
+        ans: 1,
+        explain: "蚯蚓靠濕潤的「表皮」擴散交換氣體；而昆蟲（如蝗蟲）是靠全身的「氣管系統」直接把氣體送到細胞，昆蟲的血液不含血紅素、不負責運送氧氣，也沒有肺臟！"
+      },
+      {
+        tag: "氣體成分誘答",
+        title: "小華深吸一口氣後對著澄清石灰水吹氣，石灰水變混濁。關於我們「呼出的氣體」之成分，下列敘述何者正確？",
+        options: [
+          "呼出的氣體中，含量最多的氣體是二氧化碳",
+          "呼出的氣體中，完全沒有氧氣存在",
+          "呼出的氣體中，含量最多的氣體依然是氮氣，且氧氣含量依然大於二氧化碳",
+          "呼出的氣體成分與大氣完全相同"
+        ],
+        ans: 2,
+        explain: "大魔王誘答題！呼出氣體中「二氧化碳比吸入時增加」，但含量比例最高的依然是「氮氣 (約78%)」，第二名依然是「氧氣 (約16%)」，二氧化碳僅佔約 4%！千萬別以為呼出來的全是二氧化碳！"
+      },
+      {
+        tag: "呼吸器官構造",
+        title: "不論是魚類的鰓、人類的肺泡還是青蛙的皮膚，作為「高效氣體交換」的呼吸表面通常具備三大特徵，下列何者「錯誤」？",
+        options: [
+          "具有濕潤的表面，使氣體能先溶解後再擴散",
+          "具有廣大的表面積（如分枝狀、絲狀或大量小泡囊）",
+          "表面必須具有角質層以防水分散失與外界氣體直接接觸",
+          "多數動物表面內部布滿微血管，以利體液快速運送氣體"
+        ],
+        ans: 2,
+        explain: "厚重乾燥的「角質層」會嚴重阻礙氣體擴散！因此呼吸器官表面絕對不能有乾燥厚角質，反而必須「表面濕潤」、「質薄」且「表面積廣大」。"
+      },
+      {
+        tag: "神經自主控制",
+        title: "我們可以藉由自己的意識「憋氣」一段時間，但最終一定會忍不住大口呼吸。其原因為何？",
+        options: [
+          "大腦皮質疲勞失去活性，由小腦接管控制",
+          "憋氣時血液中二氧化碳濃度不斷上升，強烈刺激腦幹，腦幹的反射調節壓過大腦的自主意識",
+          "肺臟內缺氧導致肺部平滑肌強烈抽搐",
+          "血液中葡萄糖消耗殆盡，刺激脊髓引發呼吸"
+        ],
+        ans: 1,
+        explain: "大腦意識可以暫時控制呼吸（例如潛水、唱歌憋氣），但憋氣導致二氧化碳累積過多時，生命中樞「腦幹」會啟動強大的非意志呼吸反射，強迫恢復換氣。"
+      },
+      {
+        tag: "能量代謝全貌",
+        title: "關於人體細胞呼吸作用的化學反應歷程，下列敘述何者完全正確？",
+        options: [
+          "反應式為：葡萄糖 + 二氧化碳 → 氧氣 + 水 + 能量",
+          "呼吸作用只能分解葡萄糖，完全無法利用蛋白質或脂質作為原料",
+          "胺基酸也可以進入呼吸作用分解產生能量，但會額外產生含氮廢物（如氨）",
+          "呼吸作用產生的能量會 100% 轉變為光能排出人體"
+        ],
+        ans: 2,
+        explain: "核心觀念！細胞主要利用葡萄糖分解能量，但若養分不足時，脂肪酸與胺基酸也能進行呼吸作用。蛋白質分解成的胺基酸在代謝時，會產生有毒的含氮廢物（氨），需由肝臟轉為尿素！"
+      }
+    ];
+
+    let currentQIdx = 0;
+    let userScore = 0;
+    let answered = false;
+
+    function renderQuestion() {
+      answered = false;
+      const q = quizData[currentQIdx];
+      
+      // 更新題號與進度條
+      document.getElementById('quizProgressText').textContent = `第 ${currentQIdx + 1} / ${quizData.length} 題`;
+      document.getElementById('quizProgressBar').style.width = `${((currentQIdx + 1) / quizData.length) * 100}%`;
+
+      document.getElementById('qTag').textContent = q.tag;
+      document.getElementById('qTitle').textContent = `${currentQIdx + 1}. ${q.title}`;
+
+      // 產生選項
+      const container = document.getElementById('optionsContainer');
+      container.innerHTML = '';
+      
+      q.options.forEach((optText, idx) => {
+        const btn = document.createElement('button');
+        btn.className = "w-full text-left p-4 rounded-xl border border-slate-200 text-sm font-medium hover:bg-slate-50 transition flex items-center justify-between group";
+        btn.innerHTML = `
+          <div class="flex items-center gap-3">
+            <span class="w-6 h-6 rounded-full bg-slate-100 text-slate-600 font-bold flex items-center justify-center text-xs group-hover:bg-bio-600 group-hover:text-white transition">
+              ${['A', 'B', 'C', 'D'][idx]}
+            </span>
+            <span class="option-text text-slate-700">${optText}</span>
+          </div>
+          <span class="feedback-icon font-bold text-lg hidden"></span>
+        `;
+        btn.onclick = () => selectOption(idx);
+        container.appendChild(btn);
+      });
+
+      // 重設解析與下一題按鈕
+      document.getElementById('explainBox').classList.add('hidden');
+      document.getElementById('btnNextQ').classList.add('hidden');
+    }
+
+    function selectOption(selectedIdx) {
+      if (answered) return;
+      answered = true;
+
+      const q = quizData[currentQIdx];
+      const isCorrect = (selectedIdx === q.ans);
+      if (isCorrect) userScore += 10;
+
+      const optionButtons = document.querySelectorAll('#optionsContainer button');
+      
+      optionButtons.forEach((btn, idx) => {
+        btn.disabled = true;
+        btn.classList.remove('hover:bg-slate-50');
+        const icon = btn.querySelector('.feedback-icon');
+
+        if (idx === q.ans) {
+          // 正確答案
+          btn.classList.add('bg-green-50', 'border-green-500', 'text-green-900', 'font-bold');
+          icon.textContent = "✓";
+          icon.className = "feedback-icon font-black text-green-600 text-lg block";
+        } else if (idx === selectedIdx && !isCorrect) {
+          // 選錯的
+          btn.classList.add('bg-red-50', 'border-red-400', 'text-red-900');
+          icon.textContent = "✗";
+          icon.className = "feedback-icon font-black text-red-600 text-lg block";
+        } else {
+          // 未選其他選項淡化
+          btn.classList.add('opacity-40');
+        }
+      });
+
+      // 展開解析
+      const explainBox = document.getElementById('explainBox');
+      const badge = document.getElementById('explainResultBadge');
+      const content = document.getElementById('explainContent');
+
+      if (isCorrect) {
+        badge.textContent = "恭喜答對！🎉";
+        badge.className = "px-2.5 py-0.5 rounded-md text-xs font-black bg-green-100 text-green-800";
+      } else {
+        badge.textContent = "掉入陷阱了！⚠️";
+        badge.className = "px-2.5 py-0.5 rounded-md text-xs font-black bg-red-100 text-red-800";
+      }
+      content.innerHTML = q.explain;
+      explainBox.classList.remove('hidden');
+
+      // 顯示下一題按鈕
+      const nextBtn = document.getElementById('btnNextQ');
+      nextBtn.classList.remove('hidden');
+      nextBtn.classList.add('flex');
+    }
+
+    function nextQuestion() {
+      currentQIdx++;
+      if (currentQIdx < quizData.length) {
+        renderQuestion();
+      } else {
+        showResults();
+      }
+    }
+
+    function showResults() {
+      document.getElementById('quizCard').classList.add('hidden');
+      document.getElementById('resultCard').classList.remove('hidden');
+      document.getElementById('scoreDisplay').textContent = userScore;
+
+      const fTitle = document.getElementById('feedbackTitle');
+      const fText = document.getElementById('feedbackText');
+
+      if (userScore >= 90) {
+        fTitle.textContent = "🌟 實力超群：會考 A++ 生物大神！";
+        fText.textContent = "太厲害了！你對「呼吸運動」與「呼吸作用」的微觀機轉、中樞調控瞭若指掌，會考遇到任何誘答題目都能一眼看穿陷阱！繼續保持！";
+      } else if (userScore >= 70) {
+        fTitle.textContent = "🌿 觀念良好：坐 A 望 A++ 衝刺者！";
+        fText.textContent = "基礎相當扎實！但在「腦幹偵測二氧化碳」、「寶特瓶模型無法模擬肋骨」或「呼出氣體氣體比例」等細節陷阱中稍有失分，仔細重讀第三頁對照表即可穩穩摘 A！";
+      } else {
+        fTitle.textContent = "💡 觀念待補強：趕快釐清核心陷阱！";
+        fText.textContent = "別氣餒！很多題目正是全台灣九年級學生最容易混淆的盲點。強烈建議你立刻切換至「重點筆記對照表」與「互動實驗室」，動手拉一拉橫膈模型，把粒線體與呼吸運動徹底分開！";
+      }
+    }
+
+    function restartQuiz() {
+      currentQIdx = 0;
+      userScore = 0;
+      document.getElementById('resultCard').classList.add('hidden');
+      document.getElementById('quizCard').classList.remove('hidden');
+      renderQuestion();
+    }
+
+    // 初始化啟動測驗第一題
+    window.addEventListener('DOMContentLoaded', () => {
+      renderQuestion();
+    });
+  </script>
+</body>
+</html>
